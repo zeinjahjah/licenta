@@ -30,12 +30,12 @@ Route::post('/login', [AuthController::class, 'login']);
 // // protect routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
-    Route::get('/teme/coordonator/{id}', [TemeController::class, 'temeByCoordonator']);
+    Route::get('/teme/coordonator/{coordonator_id}', [TemeController::class, 'temeByCoordonator']);
     Route::resource('teme', TemeController::class);
 
     Route::resource('workspace', WorkspaceController::class);
 
-    Route::get('/event/student/{id}', [EventController::class, 'index']);
+    Route::get('/event/student/{studentId}', [EventController::class, 'index']);
     Route::resource('event', EventController::class);
 
     Route::resource('comment', CommentController::class);

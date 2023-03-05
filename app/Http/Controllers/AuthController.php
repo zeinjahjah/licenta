@@ -24,14 +24,20 @@ class AuthController extends Controller
             'facultatea'   => 'string',
             'specializare'  => 'string',
             'is_admin'  => 'integer',
-            'type'      => 'required | string'
+            'type'      => 'required | integer'
         ]);
 
+        if ($fields['type'] == 0) {
+            $type = 'student';
+        } else if ($fields['type'] == 1) {
+            $type = 'coordonator';
+        }
+        
         $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
             'password' => bcrypt($fields['password']),
-            'type' => $fields['type']
+            'type' => $type
         ]); 
 
         if($fields['type'] == 'student'){

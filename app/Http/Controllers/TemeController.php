@@ -14,11 +14,18 @@ class TemeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function temeByCoordonator($id)
+    public function temeByCoordonator($coordonator_id)
     {
+            $coordonator = Coordonator::where('id',$coordonator_id)->first();
+            $teme = Teme::where('coordonator_id',$coordonator_id)->get();
+            $result = [
+                'coordonator' => $coordonator,
+                'teme' => $teme
+            ];
+            
         return response([
             'status' => 1,
-            'data' => Teme::where('coordonator_id',$id)->get()
+            'data' => $result
         ], 200);
     }
 
