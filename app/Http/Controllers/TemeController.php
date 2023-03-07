@@ -64,7 +64,7 @@ class TemeController extends Controller
         }
         // get coordonator id
         $coordonator =  Coordonator::where('user_id', $user->id)->first();
-        $inputs['coordonator_id'] = $coordonator->id;
+        $inputs['coordonator_id'] = $user->id;
 
         return response([
             'status' => 1,
