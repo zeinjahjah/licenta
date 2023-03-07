@@ -15,4 +15,9 @@ class Teme extends Model
         'specializare',
         'coordonator_id'
     ];
+
+    public function coordinator()
+    {
+        return $this->belongsTo('App\Models\Coordonator');
+    }
 }

@@ -24,4 +24,14 @@ class Coordonator extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function teme()
+    {
+        return $this->hasMany('App\Models\Teme');
+    }
+
+    public function workspace()
+    {
+        return $this->hasMany('App\Models\Workspace');
+    }
 }

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Workspace;
 use App\Models\Coordonator;
 use App\Models\Student;
+use App\Models\Teme;
+use App\Models\User;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class WorkspaceController extends Controller
@@ -26,6 +28,8 @@ class WorkspaceController extends Controller
 
         // get coordonator id
         $coordonator =  Coordonator::where('user_id', $user->id)->first();
+
+        // check if it is admin
         if($user->type != 'coordonator' || !$coordonator->is_admin){
             return response([
                 'status' => 0,
@@ -33,9 +37,41 @@ class WorkspaceController extends Controller
             ], 401);
         }
 
+        // get all workspaces
+        $workspaces =  Workspace::all();
+        foreach ($workspaces as $key => $workspace) {
+                // get student data
+                $tema = Teme::where('id', $workspace['tema_id'])->first();
+                $workspaces[$key]['tema'] = $tema;
+
+                // get coordonator data
+                $coordonator = Coordonator::where('id', $workspace['coordonator_id'])->with('user')->first();
+                // add email from user table
+                if (isset($coordonator['user'])) {
+                    $coordonator['email'] = $coordonator['user']['email'];
+                } else {
+                    $coordonator['email'] = '';
+                }
+                unset($coordonator['user']);
+                $workspaces[$key]['coordonator'] = $coordonator;
+
+                // get student data
+                $student = Student::where('id', $workspace['student_id'])->with('user')->first();
+                // add email from user table
+                if (isset($student['user'])) {
+                    $student['email'] = $student['user']['email'];
+                } else {
+                    $student['email'] = '';
+                }
+                unset($student['user']);
+                $workspaces[$key]['student'] = $student;
+        }
+
+
+
         return response([
             'status' => 1,
-            'data' => Workspace::all()
+            'data' => $workspaces
         ], 200);
     }
 
@@ -65,6 +101,41 @@ class WorkspaceController extends Controller
         return response([
             'status' => 1,
             'data' => Workspace::create($inputs)
+        ], 200);
+    }
+
+
+    public function getWorkspaceByStatus(Request $request, $status_id)
+    {
+        $result      = [];
+        $bearerToken = $request->bearerToken();
+        $token       = PersonalAccessToken::findToken($bearerToken);
+        $user        = $token->tokenable;
+
+        // get conrdinator workspaces based on status
+        $workspaces =  Workspace::where('coordonator_id', $user->id)->where('status', $status_id)->get();
+
+        foreach ($workspaces as  $workspace) {
+            // get student data
+            $student = Student::where('id', $workspace['student_id'])->with('user')->first();
+            if (isset($student['user'])){
+                $student['email'] = $student['user']['email'];
+            }else{
+                $student['email'] = '';
+            }
+            unset($student['user']);
+
+            // get tema data
+            $tema = Teme::where('id', $workspace['tema_id'])->first();
+            $result [] = [
+            'student' => $student,
+            'tema' =>$tema
+            ];
+        }
+        
+        return response([
+            'status' => 1,
+            'data' => $result
         ], 200);
     }
 

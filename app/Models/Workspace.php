@@ -21,4 +21,14 @@ class Workspace extends Model
         'student_id',
         'coordonator_id'
     ];
+
+    public function student()
+    {
+        return $this->belongsTo('App\Models\Student');
+    }
+
+    public function coordinator()
+    {
+        return $this->belongsTo('App\Models\Coordinator');
+    }
 }

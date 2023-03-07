@@ -24,4 +24,9 @@ class Student extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function workspace()
+    {
+        return $this->hasOne('App\Models\Workspace');
+    }
 }

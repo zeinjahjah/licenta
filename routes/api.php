@@ -30,20 +30,41 @@ Route::post('/login', [AuthController::class, 'login']);
 // // protect routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
+    // student alege o tema - testing only
+    Route::post('/student/selectSubject', [TemeController::class, 'selectSubject']);
+    
+    //  #########################################################################
+    // get workspaces by status (used for get coordinator requests)
+    Route::get('/coordinators-workspaces/{status_id}', [WorkspaceController::class, 'getWorkspaceByStatus']);
+    // get all cordinatori cu teme
+    Route::get('/coordinators-with-subjects', [TemeController::class, 'allCoordinatorsWithSubjects']);
+    // get all students cu teme
+    Route::get('/students-with-subject', [TemeController::class, 'allstudentswithSubject']);
+
+    //  #########################################################################
     Route::get('/teme/coordonator/{coordonator_id}', [TemeController::class, 'temeByCoordonator']);
     Route::resource('teme', TemeController::class);
 
+    //  #########################################################################
     Route::resource('workspace', WorkspaceController::class);
 
+    
+    //  #########################################################################
     Route::get('/event/student/{studentId}', [EventController::class, 'index']);
     Route::resource('event', EventController::class);
 
+    
+    //  #########################################################################
     Route::resource('comment', CommentController::class);
 
+    
+    //  #########################################################################
     Route::post('/upload-file', [AttachmentController::class, 'fileUpload'])->name('fileUpload');
     Route::get('/get-file/{eventId}', [AttachmentController::class, 'getEventFile']);
     Route::get('/remove-file/{fileId}', [AttachmentController::class, 'RemoveFile']);
 
+    
+    //  #########################################################################
     //logout
     Route::get('/logout', [AuthController::class, 'logout']);
 
