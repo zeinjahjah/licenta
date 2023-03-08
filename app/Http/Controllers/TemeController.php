@@ -56,6 +56,8 @@ class TemeController extends Controller
         $bearerToken = $request->bearerToken();
         $token       = PersonalAccessToken::findToken($bearerToken);
         $user        = $token->tokenable;
+        // echo json_encode($user);die;
+
         if ($user->type != 'coordonator') {
             return response([
                 'status' => 0,

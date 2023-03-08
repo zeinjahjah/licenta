@@ -87,15 +87,21 @@ class WorkspaceController extends Controller
         $bearerToken = $request->bearerToken();
         $token       = PersonalAccessToken::findToken($bearerToken);
         $user        = $token->tokenable;
+        
+        
         if($user->type != 'student'){
             return response([
                 'status' => 0,
                 'data' => 'numai studentii poate sa faca workspace'
             ], 401);
         } 
-        // get coordonator id
-        $coordonator =  Student::where('user_id', $user->id)->first();
-        $inputs['student_id'] = $coordonator->id;
+        
+        // get Student id
+        $student =  Student::where('user_id', $user->id)->first();
+        
+
+        $inputs['student_id'] = $student->id;
+        
         $inputs['status'] = 0;
 
         return response([
@@ -128,6 +134,7 @@ class WorkspaceController extends Controller
             // get tema data
             $tema = Teme::where('id', $workspace['tema_id'])->first();
             $result [] = [
+            'worspace_id' => $workspace['id'],
             'student' => $student,
             'tema' =>$tema
             ];
@@ -171,7 +178,9 @@ class WorkspaceController extends Controller
 
         // get coordonator id
         $coordonator =  Coordonator::where('user_id', $user->id)->first();
-        if(!$workspace || $user->type != 'coordonator' || $workspace->coordonator_id != $coordonator->id){
+        
+
+        if(!$workspace || $workspace->coordonator_id != $coordonator->id){
             return response([
                 'status' => 0,
                 'data' => 'permission denied.'

@@ -40,7 +40,7 @@ class AuthController extends Controller
             'type' => $type
         ]); 
 
-        if($fields['type'] == 'student'){
+        if($fields['type'] == '0'){
             $student = Student::create([
                 'user_id' => $user->id,
                 'address' => $fields['address'],
@@ -48,7 +48,7 @@ class AuthController extends Controller
                 'facultatea' => $fields['facultatea'],
                 'specializare' => $fields['specializare']
                 ]);
-        }else if ($fields['type'] == 'coordonator') {
+        }else if ($fields['type'] == '1') {
             $corrdonator = Coordonator::create([
                 'user_id' => $user->id,
                 'address' => $fields['address'],
