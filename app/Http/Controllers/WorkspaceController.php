@@ -88,7 +88,7 @@ class WorkspaceController extends Controller
         $token       = PersonalAccessToken::findToken($bearerToken);
         $user        = $token->tokenable;
         
-        
+            
         if($user->type != 'student'){
             return response([
                 'status' => 0,
@@ -99,11 +99,11 @@ class WorkspaceController extends Controller
         // get Student id
         $student =  Student::where('user_id', $user->id)->first();
         
-
+        
         $inputs['student_id'] = $student->id;
         
         $inputs['status'] = 0;
-
+        
         return response([
             'status' => 1,
             'data' => Workspace::create($inputs)
@@ -117,10 +117,12 @@ class WorkspaceController extends Controller
         $bearerToken = $request->bearerToken();
         $token       = PersonalAccessToken::findToken($bearerToken);
         $user        = $token->tokenable;
+        $coordonator =  Coordonator::where('user_id', $user->id)->first();
+
 
         // get conrdinator workspaces based on status
-        $workspaces =  Workspace::where('coordonator_id', $user->id)->where('status', $status_id)->get();
-
+        $workspaces =  Workspace::where('coordonator_id', $coordonator->id)->where('status', $status_id)->get();
+            
         foreach ($workspaces as  $workspace) {
             // get student data
             $student = Student::where('id', $workspace['student_id'])->with('user')->first();
