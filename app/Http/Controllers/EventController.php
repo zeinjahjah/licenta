@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Workspace;
 use App\Models\File;
 use App\Models\Event;
+use App\Models\Student;
 use Laravel\Sanctum\PersonalAccessToken;
+use PHPUnit\Framework\MockObject\Builder\Stub;
 
 class EventController extends Controller
 {
@@ -24,7 +26,10 @@ class EventController extends Controller
         $token       = PersonalAccessToken::findToken($bearerToken);
         $user        = $token->tokenable;
         if ($user->type == 'student') {
-            $workspace =  Workspace::where('student_id', $user->id)->first();
+            $student =  Student::where('user_id', $user->id)->first();
+
+            $workspace =  Workspace::where('student_id', $student->id)->first();
+
             $events = Event::where('workspace_id', $workspace->id)->get();
             $events = isset($events) ? $events : [];
             return response([
@@ -90,7 +95,7 @@ class EventController extends Controller
         if($event){
             $event = $event->with('attachment', 'comments')->get();
         }
-        // echo json_encode($event);die;
+     
         return response([
             'status' => 1,
             'data' => $event
