@@ -124,10 +124,21 @@ class WorkspaceController extends Controller
         
         // // get student_id from Workspace table
         $workspace =  Workspace::where('student_id', $aux)->first();
-        $result = $workspace->status;
+        if($workspace){
+            $result = $workspace->status;
+
+            
+        }
+        else{
+
+            $result = null;
+
+        }
         
         return response([
-            'student status with selected one tema' => $result
+            'status' => 1,
+            'data' =>  ['workspace_status'=> $result],
+           
         ], 200);
         
     }
