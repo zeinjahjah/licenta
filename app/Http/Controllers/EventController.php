@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coordonator;
 use Illuminate\Http\Request;
 use App\Models\Workspace;
 use App\Models\File;
 use App\Models\Event;
 use App\Models\Student;
+use App\Models\User;
 use Laravel\Sanctum\PersonalAccessToken;
 use PHPUnit\Framework\MockObject\Builder\Stub;
 
@@ -90,7 +92,16 @@ class EventController extends Controller
      */
     public function show($id)
     {
-        $event = Event::where('id',$id)->with('attachment', 'comments')->get();
+        $event = Event::where('id',$id)->with('attachment', 'comments')->first();
+        
+        $user_id= $event->author_id;
+        $user_type= $event->author_type;
+        
+        $user = User::where('id',$user_id)->first();
+        $user_name =$user->name;
+
+        $event['author_name']= $user_name;
+   
 
         return response([
             'status' => 1,
