@@ -110,6 +110,28 @@ class WorkspaceController extends Controller
         ], 200);
     }
 
+    public function studentWorkspaceStatus(Request $request)
+    {
+        $inputs = $request->all();
+        $bearerToken = $request->bearerToken();
+        $token       = PersonalAccessToken::findToken($bearerToken);
+        $user        = $token->tokenable;
+        
+    
+        // // get user_id from Student table
+        $student =  Student::where('user_id', $user->id)->first();
+        $aux = $student->id;
+        
+        // // get student_id from Workspace table
+        $workspace =  Workspace::where('student_id', $aux)->first();
+        $result = $workspace->status;
+        
+        return response([
+            'student status with selected one tema' => $result
+        ], 200);
+        
+    }
+
 
     public function getWorkspaceByStatus(Request $request, $status_id)
     {
