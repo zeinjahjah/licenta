@@ -90,12 +90,8 @@ class EventController extends Controller
      */
     public function show($id)
     {
-        // $file = File::where("event_id", $id)->first();
-        $event = Event::find($id);
-        if($event){
-            $event = $event->with('attachment', 'comments')->get();
-        }
-     
+        $event = Event::where('id',$id)->with('attachment', 'comments')->get();
+
         return response([
             'status' => 1,
             'data' => $event
