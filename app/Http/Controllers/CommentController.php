@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\Comment;
+use App\Models\User;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class CommentController extends Controller
@@ -56,6 +57,15 @@ class CommentController extends Controller
             ], 200);
         }
         $comments = Comment::where('event_id', $event->id)->get();
+        foreach ($comments as $key => $comment) {
+            $user_id= $comment->author_id;
+
+            $user = User::where('id',$user_id)->first();
+            $user_name= $user->name;
+
+            $comments[$key]['author_name']= $user_name;
+        }
+       
         $comments = isset($comments) ? $comments : [];
 
         return response([
