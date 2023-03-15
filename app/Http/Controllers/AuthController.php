@@ -31,8 +31,12 @@ class AuthController extends Controller
             $type = 'student';
         } else if ($fields['type'] == 1) {
             $type = 'coordonator';
+        }else if ($fields['type'] == 2) {
+            $type = 'admin';
+
         }
-        
+
+
         $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
