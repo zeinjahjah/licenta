@@ -76,6 +76,10 @@ class EventController extends Controller
         } else if ($user->type = 'coordonator') {
             $inputs['author_type'] = 'coordonator';
         }
+        // echo json_encode($inputs);die;
+        if ( !isset($inputs['descriere'])) {
+            $inputs['descriere'] = '';
+        }
         return response([
             'status' => 1,
             'data' => Event::create($inputs)
