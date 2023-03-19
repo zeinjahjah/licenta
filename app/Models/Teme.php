@@ -12,6 +12,7 @@ class Teme extends Model
     protected $fillable = [
         'title',
         'detalii',
+        'tema_type',
         'specializare',
         'coordonator_id'
     ];

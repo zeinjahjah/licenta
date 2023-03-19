@@ -10,6 +10,8 @@ use App\Models\Teme;
 use App\Models\User;
 use Laravel\Sanctum\PersonalAccessToken;
 
+use function PHPSTORM_META\type;
+
 class WorkspaceController extends Controller
 {
 
@@ -187,8 +189,36 @@ class WorkspaceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
+
+        $result      = [];
+        $bearerToken = $request->bearerToken();
+        $token       = PersonalAccessToken::findToken($bearerToken);
+        $user        = $token->tokenable;
+        $workspace = Workspace::find($id);
+
+        if ($user->type == 'coordonator') {
+            $coordonator =  Coordonator::where('user_id', $user->id)->first();
+
+            if ($coordonator->id != $workspace->coordonator_id){
+                return response([
+                    'status' => 0,
+                    'data' => 'permission denied.'
+                ], 401);
+            }
+
+        }else  if ($user->type == 'student') {
+            $student =  Student::where('user_id', $user->id)->first();
+
+            if ($student->id != $workspace->student_id){
+                return response([
+                    'status' => 0,
+                    'data' => 'permission denied.'
+                ], 401);
+            }
+        }
+
         return response([
             'status' => 1,
             'data' => Workspace::find($id)

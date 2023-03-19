@@ -32,7 +32,7 @@ class EventController extends Controller
 
             $workspace =  Workspace::where('student_id', $student->id)->first();
 
-            $events = Event::where('workspace_id', $workspace->id)->get();
+            $events = Event::where('workspace_id', $workspace->id)->with('attachment')->get();
             $events = isset($events) ? $events : [];
             return response([
                 'status' => 1,
@@ -41,7 +41,7 @@ class EventController extends Controller
 
         } else if ($user->type = 'coordonator') {
             $workspace =  Workspace::where('student_id', $studentId)->first();
-            $events = Event::where('workspace_id', $workspace->id)->get();
+            $events = Event::where('workspace_id', $workspace->id)->with('attachment')->get();
             $events = isset($events) ? $events : [];
             return response([
                 'status' => 1,
