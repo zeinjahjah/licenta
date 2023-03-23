@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('teme_de_licenta', function (Blueprint $table) {
-            $table->tinyInteger('is_taken')->after("tema_type");
+            $table->tinyInteger('is_taken')->after("tema_type")->default(0);
         });
     }
 
