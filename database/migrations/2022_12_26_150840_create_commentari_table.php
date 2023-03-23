@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedInteger('event_id');
             $table->unsignedInteger('author_id');
             $table->string('author_type');
-            $table->string('content');
+            $table->longText('content');
             $table->timestamps();
         });
     }

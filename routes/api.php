@@ -41,6 +41,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // get all students cu teme
     Route::get('/students-with-subject', [TemeController::class, 'allstudentswithSubject']);
 
+    //get all coordinators with accepted students
+    Route::get('/coordinators-accepted-students', [WorkspaceController::class, 'getAcceptedStudents']);
+
     //  ################################# Zen ########################################
     // get student status
     Route::get('/student/statue',  [WorkspaceController::class, 'studentWorkspaceStatus']);
@@ -57,8 +60,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     
     //  #########################################################################
     Route::get('/event/student/{studentId}', [EventController::class, 'index']);
+    Route::get('/event/coordinator/homepage', [EventController::class, 'coordinatorHomepage']);
     Route::resource('event', EventController::class);
-
     
     //  #########################################################################
     Route::resource('comment', CommentController::class);

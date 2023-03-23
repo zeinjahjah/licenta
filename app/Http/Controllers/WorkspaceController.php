@@ -183,6 +183,56 @@ class WorkspaceController extends Controller
         ], 200);
     }
 
+    public function getAcceptedStudents (Request $request)
+    {
+        $result      = [];
+        $bearerToken = $request->bearerToken();
+        $token       = PersonalAccessToken::findToken($bearerToken);
+        $user        = $token->tokenable;
+        $coordonator =  Coordonator::where('user_id', $user->id)->first();
+
+        if (!$coordonator || !$coordonator->is_admin) {
+            return response([
+                'status' => 0,
+                'data' => 'permission denied.'
+            ], 401);
+        }
+
+        $coordonators =  Coordonator::with('user')->get();
+
+        foreach ($coordonators as $key =>  $coordonator) {
+            if (isset($coordonator['user'])){
+                $coordonator['email'] = $coordonator['user']['email'];
+                $coordonator['name'] = $coordonator['user']['name'];
+            }else{
+                $coordonator['email'] = '';
+            } 
+            unset($coordonator['user']);
+
+            $workspaces =  Workspace::where('coordonator_id', $coordonator->id)->where('status', 1)->get();
+            $students = [];
+            foreach ($workspaces as $key2 => $workspace) {
+                // get student data
+                $student = Student::where('id', $workspace['student_id'])->with('user')->first();
+                if (isset($student['user'])){
+                    $students[$key2]['email']        = $student['user']['email'];
+                    $students[$key2]['name']         = $student['user']['name'];
+                    $students[$key2]['specializare'] = $student['specializare'];
+                }
+
+                // get tema data
+                $tema = Teme::where('id', $workspace['tema_id'])->first();
+                $students[$key2]['tema'] = $tema['title'];
+            }
+            $coordonators[$key]['students'] = $students;
+        }
+        
+        return response([
+            'status' => 1,
+            'data' => $coordonators
+        ], 200);
+    }
+
     /**
      * Display the specified resource.
      *
@@ -254,11 +304,16 @@ class WorkspaceController extends Controller
 
    
 
-        $tema =  Workspace::find($id);
-        $tema->update($request->all());
+        $workspace =  Workspace::find($id);
+        // $tema->update($inputs);
+        if ($inputs['status'] && $inputs['status'] == 1) {
+           Teme::whereId( $workspace['tema_id'])->update(['is_taken' => 1]);
+
+        }
+        
         return response([
             'status' => 1,
-            'data' => $tema
+            'data' => $workspace
         ], 200);
     }
 

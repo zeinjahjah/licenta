@@ -13,13 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('teme_de_licenta', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->longText('detalii');
-            $table->string('specializare');
-            $table->unsignedInteger('coordonator_id');
-            $table->timestamps();
+        Schema::table('teme_de_licenta', function (Blueprint $table) {
+            $table->tinyInteger('is_taken')->after("tema_type");
         });
     }
 
@@ -30,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('teme_de_licenta');
+        Schema::table('teme_de_licenta', function (Blueprint $table) {
+            //
+        });
     }
 };

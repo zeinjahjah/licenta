@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedInteger('author_id');
             $table->string('author_type');
             $table->string('title');
-            $table->string('descriere');
+            $table->longText('descriere');
             $table->string('type');
             $table->date('due_date');
             $table->timestamps();

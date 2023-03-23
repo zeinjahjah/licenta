@@ -6,11 +6,13 @@ use App\Models\Coordonator;
 use Illuminate\Http\Request;
 use App\Models\Workspace;
 use App\Models\File;
+use App\Models\Teme;
 use App\Models\Event;
 use App\Models\Student;
 use App\Models\User;
 use Laravel\Sanctum\PersonalAccessToken;
 use PHPUnit\Framework\MockObject\Builder\Stub;
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
@@ -112,6 +114,40 @@ class EventController extends Controller
             'data' => $event
         ], 200);
     }
+
+
+    public function coordinatorHomepage(Request $request,)
+    {
+        $bearerToken = $request->bearerToken();
+        $token       = PersonalAccessToken::findToken($bearerToken);
+        $user        = $token->tokenable;
+        $coordonator =  Coordonator::where('user_id', $user->id)->first();
+        $results = [];
+        $events = Event::where('author_id',$coordonator->id)
+                        ->where('author_type', 'coordonator')
+                        ->where('due_date', '>=', Carbon::today()->toDateString())->get();
+        
+        foreach ($events as  $event) {
+            $workspace =  Workspace::where('id', $event->workspace_id)->first();
+            $student =  Student::where('id', $workspace->student_id)->with('user')->first();
+            $tema = Teme::where('id', $workspace->tema_id)->first();
+            $results [] = [
+                'student_name' => $student['user'] ? $student['user']['name'] : '',
+                'student_email' => $student['user'] ? $student['user']['email'] : '',
+                'tema_title' => $tema['title'],
+                'event_title' => $event['title'],
+                'event_type' => $event['type'],
+                'event_deadline' => $event['due_date'],
+            ];
+
+        }
+
+        return response([
+            'status' => 1,
+            'data' => $results
+        ], 200);
+    }
+
 
     /**
      * Update the specified resource in storage.
