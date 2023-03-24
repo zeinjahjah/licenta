@@ -72,13 +72,29 @@ class EventController extends Controller
         $token            = PersonalAccessToken::findToken($bearerToken);
         $user             = $token->tokenable;
         $inputs['author_id'] = $user->id;
-        
+        $workspace =  Workspace::where('id', $inputs['workspace_id'])->first();
+
         if ($user->type == 'student') {
             $inputs['author_type'] = 'student';
+            $student =  Student::where('user_id', $user->id)->first();
+
+            if (!$workspace || $student->id != $workspace->student_id) {
+                return response([
+                    'status' => 0,
+                    'data' => 'permission denied.'
+                ], 401);
+            }
         } else if ($user->type = 'coordonator') {
             $inputs['author_type'] = 'coordonator';
+            $coordonator =  Coordonator::where('user_id', $user->id)->first();
+            if (!$workspace || $coordonator->id != $workspace->coordonator_id) {
+                return response([
+                    'status' => 0,
+                    'data' => 'permission denied.'
+                ], 401);
+            }
         }
-        // echo json_encode($inputs);die;
+
         if ( !isset($inputs['descriere'])) {
             $inputs['descriere'] = '';
         }

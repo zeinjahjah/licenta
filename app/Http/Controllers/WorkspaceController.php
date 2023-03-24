@@ -8,6 +8,9 @@ use App\Models\Coordonator;
 use App\Models\Student;
 use App\Models\Teme;
 use App\Models\User;
+use App\Models\Event;
+use Carbon\Carbon;
+
 use Laravel\Sanctum\PersonalAccessToken;
 
 use function PHPSTORM_META\type;
@@ -268,10 +271,19 @@ class WorkspaceController extends Controller
                 ], 401);
             }
         }
+        $workspace =  Workspace::find($id);
+
+        $student =  Student::where('id', $workspace->student_id)->with('user')->first();
+        $tema = Teme::where('id', $workspace->tema_id)->first();
+
+        $workspace['tema title']=$tema['title'];
+        $workspace['coordonator']=$user['name'];
+        $workspace['student']=$student['user']['name'];
+
 
         return response([
             'status' => 1,
-            'data' => Workspace::find($id)
+            'data' => $workspace
         ], 200);
     }
 
@@ -310,7 +322,7 @@ class WorkspaceController extends Controller
            Teme::whereId( $workspace['tema_id'])->update(['is_taken' => 1]);
 
         }
-        
+        $workspace->update($request->all());
         return response([
             'status' => 1,
             'data' => $workspace
