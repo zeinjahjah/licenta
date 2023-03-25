@@ -52,7 +52,7 @@ class AuthController extends Controller
                 'facultatea' => $fields['facultatea'],
                 'specializare' => $fields['specializare']
                 ]);
-        }else if ($fields['type'] == '1') {
+        }else if ($fields['type'] == '1' || $fields['type'] == '2') {
             $corrdonator = Coordonator::create([
                 'user_id' => $user->id,
                 'address' => $fields['address'],
