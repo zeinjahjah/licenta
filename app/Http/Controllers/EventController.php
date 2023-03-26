@@ -29,27 +29,59 @@ class EventController extends Controller
         $bearerToken = $request->bearerToken();
         $token       = PersonalAccessToken::findToken($bearerToken);
         $user        = $token->tokenable;
+
         if ($user->type == 'student') {
             $student =  Student::where('user_id', $user->id)->first();
 
             $workspace =  Workspace::where('student_id', $student->id)->first();
-
+           
+            $workspace['workspace id']= $workspace->id;
             $events = Event::where('workspace_id', $workspace->id)->with('attachment')->get();
             $events = isset($events) ? $events : [];
+            $coordonator =  Coordonator::where('user_id', $workspace->coordonator_id)->with('user')->first();
+            $tema = Teme::where('id', $workspace->tema_id)->first();
+
+            $workspace_info = ([
+                'workspace_id'=> $workspace->id,
+                'studen name'=> $user->name,
+                'coordonator name'=> $coordonator->user->name,
+                'tema title'=> $tema->title,
+                'events' => $events
+                
+            ]);
+
             return response([
                 'status' => 1,
-                'data' => $events
+                'workspace_info'=> $workspace_info
+               
             ], 200);
 
+            
         } else if ($user->type = 'coordonator') {
+                    
             $workspace =  Workspace::where('student_id', $studentId)->first();
             $events = Event::where('workspace_id', $workspace->id)->with('attachment')->get();
             $events = isset($events) ? $events : [];
+        
+        $student =  Student::where('id', $workspace->student_id)->with('user')->first();
+
+        $tema = Teme::where('id', $workspace->tema_id)->first();
+        
+            $workspace_info = ([
+                'workspace_id'=> $workspace->id,
+                'coordonator name'=> $user->name,
+                'studen name'=> $student->user->name,
+                'tema title'=> $tema->title,
+                'events' => $events
+                
+            ]);
+
+
             return response([
                 'status' => 1,
-                'data' => $events
+                'workspace_info'=> $workspace_info
             ], 200);
-
+            
         }
 
         return response([

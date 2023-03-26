@@ -8,6 +8,7 @@ use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\ExportController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -43,6 +44,20 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     //get all coordinators with accepted students
     Route::get('/coordinators-accepted-students', [WorkspaceController::class, 'getAcceptedStudents']);
+
+
+    // export toate students cu tema si coodinator
+    Route::get('/export-students-coordinators-teme', [ExportController::class, 'ExportStudentCoordinatorTema']);
+    // export students cu status (accepted/rejected)
+    Route::get('/export-student-status', [ExportController::class, 'ExportStudentStatus']);
+    // export coordinator cu teme lor
+    Route::get('/export-coordinators-teme', [ExportController::class, 'ExportCoordinatorWithTeme']);
+    
+    
+    
+    // export all students for each coordinator 
+    Route::get('/export-students-coordinators', [ExportController::class, 'ExportCoordinatorStudents']);
+
 
     //  ################################# Zen ########################################
     // get student status

@@ -29,4 +29,12 @@ class Student extends Model
     {
         return $this->hasOne('App\Models\Workspace');
     }
+
+    public function studentName($id)
+    {
+        $student = self::find($id)->with('user')->first();
+        $studentName = $student['user'] ? $student['user']['name'] : '';
+        return $studentName;
+    }
+    
 }

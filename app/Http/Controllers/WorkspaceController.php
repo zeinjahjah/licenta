@@ -252,7 +252,8 @@ class WorkspaceController extends Controller
         $workspace = Workspace::find($id);
 
         if ($user->type == 'coordonator') {
-            $coordonator =  Coordonator::where('user_id', $user->id)->first();
+            $coordonator =  Coordonator::where('user_id', $user->id)->with('user')->first();
+            $student =  Student::where('id', $workspace->student_id)->with('user')->first();
 
             if ($coordonator->id != $workspace->coordonator_id){
                 return response([
@@ -260,9 +261,10 @@ class WorkspaceController extends Controller
                     'data' => 'permission denied.'
                 ], 401);
             }
-
+            
         }else  if ($user->type == 'student') {
-            $student =  Student::where('user_id', $user->id)->first();
+            $student =  Student::where('user_id', $user->id)->with('user')->first();
+            $coordonator =  Coordonator::where('id', $workspace->coordonator_id)->with('user')->first();
 
             if ($student->id != $workspace->student_id){
                 return response([
@@ -270,14 +272,12 @@ class WorkspaceController extends Controller
                     'data' => 'permission denied.'
                 ], 401);
             }
+  
         }
-        $workspace =  Workspace::find($id);
-
-        $student =  Student::where('id', $workspace->student_id)->with('user')->first();
         $tema = Teme::where('id', $workspace->tema_id)->first();
 
         $workspace['tema title']=$tema['title'];
-        $workspace['coordonator']=$user['name'];
+        $workspace['coordonator']=$coordonator['user']['name'];
         $workspace['student']=$student['user']['name'];
 
 
