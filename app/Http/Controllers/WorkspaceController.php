@@ -93,7 +93,7 @@ class WorkspaceController extends Controller
         $token       = PersonalAccessToken::findToken($bearerToken);
         $user        = $token->tokenable;
         
-            
+        
         if($user->type != 'student'){
             return response([
                 'status' => 0,
@@ -103,12 +103,12 @@ class WorkspaceController extends Controller
         
         // get Student id
         $student =  Student::where('user_id', $user->id)->first();
-        
-        
+
+        $tema_id =Teme::whereId($inputs['tema_id'])->update(['is_taken' => 1]);
+          
         $inputs['student_id'] = $student->id;
-        
         $inputs['status'] = 0;
-        
+ 
         return response([
             'status' => 1,
             'data' => Workspace::create($inputs)
@@ -303,9 +303,13 @@ class WorkspaceController extends Controller
         $token       = PersonalAccessToken::findToken($bearerToken);
         $user        = $token->tokenable;
 
+
         // get coordonator id
         $coordonator =  Coordonator::where('user_id', $user->id)->first();
-        
+        $workspace =  Workspace::where('coordonator_id', $coordonator->id)->first();
+
+        // echo json_encode($workspace->coordonator_id);die;
+
 
         if(!$workspace || $workspace->coordonator_id != $coordonator->id){
             return response([
@@ -314,19 +318,26 @@ class WorkspaceController extends Controller
             ], 401);
         }
 
-   
+        $statusStudent= Student::where('id',$workspace->student_id)->first();
 
-        $workspace =  Workspace::find($id);
-        // $tema->update($inputs);
-        if ($inputs['status'] && $inputs['status'] == 1) {
-           Teme::whereId( $workspace['tema_id'])->update(['is_taken' => 1]);
+        if ($inputs['status'] == 2) {
+            Workspace::where('id', $workspace->id)->delete();
 
-        }
-        $workspace->update($request->all());
+            Teme::whereId( $workspace['tema_id'])->update(['is_taken' => 0]);
+
         return response([
             'status' => 1,
-            'data' => $workspace
+            'data' => 'Student este respinsa.'   
         ], 200);
+
+        }else{
+            $workspace =  Workspace::find($id);
+            $workspace->update($request->all());
+            return response([
+                'status' => 1,
+                'data' => $workspace
+            ], 200);
+        }
     }
 
     /**
