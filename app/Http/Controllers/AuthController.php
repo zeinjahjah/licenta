@@ -19,14 +19,20 @@ class AuthController extends Controller
             'name' => 'required | string | min:3',
             'email' => 'required | string | unique:users,email',
             'password' => 'required | string | confirmed',
-            'phone'      => 'string',
-            'address'      => 'string',
-            'facultatea'   => 'string',
+            // 'phone'      => 'string',
+            // 'address'      => 'string',
+            // 'facultatea'   => 'string',
             'specializare'  => 'string',
             'is_admin'  => 'integer',
             'type'      => 'required | integer'
         ]);
 
+        // echo json_encode($fields);die;
+        // $fields['email']='';
+        $fields['phone']='';
+        $fields['address']='';
+        $fields['facultatea']='';
+        
         if ($fields['type'] == 0) {
             $type = 'student';
         } else if ($fields['type'] == 1) {
@@ -35,7 +41,6 @@ class AuthController extends Controller
             $type = 'admin';
 
         }
-
 
         $user = User::create([
             'name' => $fields['name'],
