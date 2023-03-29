@@ -180,8 +180,10 @@ class TemeController extends Controller
             // get email from user table
             if (isset($coordonator['user'])) {
                 $coordonators[$key]['email'] = $coordonator['user']['email'];
+                $coordonators[$key]['name'] = $coordonator['user']['name'];
             } else {
                 $coordonators[$key]['email'] = '';
+                $coordonators[$key]['name'] = '';
             }
             unset($coordonators[$key]['user']);
         }
@@ -200,8 +202,10 @@ class TemeController extends Controller
             // get email from user table
             if (isset($student['user'])) {
                 $students[$key]['email'] = $student['user']['email'];
+                $students[$key]['student_name'] = $student['user']['name'];
             } else {
                 $students[$key]['email'] = '';
+                $students[$key]['student_name'] = '';
             }
             unset($students[$key]['user']);
 
@@ -217,8 +221,10 @@ class TemeController extends Controller
 
                 if (isset($coordonator['user'])) {
                     $coordonator['email'] = $coordonator['user']['email'];
+                    $coordonator['coordinator_name'] = $coordonator['user']['name'];
                 } else {
                     $coordonator['email'] = '';
+                    $coordonator['coordinator_name'] = '';
                 }
                 unset($coordonator['user']);
 

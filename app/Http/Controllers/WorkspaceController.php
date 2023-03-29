@@ -126,7 +126,7 @@ class WorkspaceController extends Controller
         // // get user_id from Student table
         $student =  Student::where('user_id', $user->id)->first();
         $aux = $student->id;
-        
+
         // // get student_id from Workspace table
         $workspace =  Workspace::where('student_id', $aux)->first();
         if($workspace){
@@ -221,11 +221,17 @@ class WorkspaceController extends Controller
                     $students[$key2]['email']        = $student['user']['email'];
                     $students[$key2]['name']         = $student['user']['name'];
                     $students[$key2]['specializare'] = $student['specializare'];
+                    $students[$key2]['workspace_id'] = $workspace['id'];
                 }
 
                 // get tema data
                 $tema = Teme::where('id', $workspace['tema_id'])->first();
                 $students[$key2]['tema'] = $tema['title'];
+            }
+            if (isset($student['user'])){
+                $students[$key2]['email']        = $student['user']['email'];
+                $students[$key2]['name']         = $student['user']['name'];
+                $students[$key2]['specializare'] = $student['specializare'];
             }
             $coordonators[$key]['students'] = $students;
         }
@@ -303,11 +309,9 @@ class WorkspaceController extends Controller
         $token       = PersonalAccessToken::findToken($bearerToken);
         $user        = $token->tokenable;
 
-
         // get coordonator id
         $coordonator =  Coordonator::where('user_id', $user->id)->first();
         $workspace =  Workspace::where('coordonator_id', $coordonator->id)->first();
-
         // echo json_encode($workspace->coordonator_id);die;
 
 
@@ -322,7 +326,6 @@ class WorkspaceController extends Controller
 
         if ($inputs['status'] == 2) {
             Workspace::where('id', $workspace->id)->delete();
-
             Teme::whereId( $workspace['tema_id'])->update(['is_taken' => 0]);
 
         return response([
