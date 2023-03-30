@@ -57,6 +57,8 @@ class AuthController extends Controller
                 'facultatea' => $fields['facultatea'],
                 'specializare' => $fields['specializare']
                 ]);
+                $user['student_id']= $student['id'];
+                
         }else if ($fields['type'] == '1' || $fields['type'] == '2') {
             $corrdonator = Coordonator::create([
                 'user_id' => $user->id,
@@ -64,8 +66,9 @@ class AuthController extends Controller
                 'phone' => $fields['phone'],
                 'facultatea' => $fields['facultatea'],
                 'specializare' => $fields['specializare'],
-                'is_admin' => $fields['is_admin']
+                'is_admin' => $fields['is_admin']     
             ]);
+            $user['corrdonator_id']= $corrdonator['id'];
         }
 
         $response = $user;
