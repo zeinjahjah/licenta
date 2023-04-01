@@ -24,7 +24,6 @@ class EventController extends Controller
      */
     public function index(Request $request, $studentId = null)
     {
-
         $inputs = $request->all();
         $bearerToken = $request->bearerToken();
         $token       = PersonalAccessToken::findToken($bearerToken);
@@ -40,11 +39,16 @@ class EventController extends Controller
                 $events = isset($events) ? $events : [];
                 $coordonator =  Coordonator::where('user_id', $workspace->coordonator_id)->with('user')->first();
                 $tema = Teme::where('id', $workspace->tema_id)->first();
+                if ($coordonator){
+                    $coordonator_name=$coordonator->user->name;
 
+                }else{
+                    $coordonator_name="";           
+                }
                 $workspace_info = ([
                     'workspace_id'=> $workspace->id,
                     'studen name'=> $user->name,
-                    'coordonator name'=> $coordonator->user->name,
+                    'coordonator name'=> $coordonator_name,
                     'tema title'=> $tema->title,
                     'events' => $events
                     
