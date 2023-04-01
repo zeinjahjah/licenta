@@ -34,37 +34,40 @@ class EventController extends Controller
             $student =  Student::where('user_id', $user->id)->first();
 
             $workspace =  Workspace::where('student_id', $student->id)->first();
-           
-            $workspace['workspace id']= $workspace->id;
-            $events = Event::where('workspace_id', $workspace->id)->with('attachment')->get();
-            $events = isset($events) ? $events : [];
-            $coordonator =  Coordonator::where('user_id', $workspace->coordonator_id)->with('user')->first();
-            $tema = Teme::where('id', $workspace->tema_id)->first();
+            if ($workspace) {
+                $workspace['workspace id']= $workspace->id;
+                $events = Event::where('workspace_id', $workspace->id)->with('attachment')->get();
+                $events = isset($events) ? $events : [];
+                $coordonator =  Coordonator::where('user_id', $workspace->coordonator_id)->with('user')->first();
+                $tema = Teme::where('id', $workspace->tema_id)->first();
 
-            $workspace_info = ([
-                'workspace_id'=> $workspace->id,
-                'studen name'=> $user->name,
-                'coordonator name'=> $coordonator->user->name,
-                'tema title'=> $tema->title,
-                'events' => $events
-                
-            ]);
+                $workspace_info = ([
+                    'workspace_id'=> $workspace->id,
+                    'studen name'=> $user->name,
+                    'coordonator name'=> $coordonator->user->name,
+                    'tema title'=> $tema->title,
+                    'events' => $events
+                    
+                ]);
+            }else {
+                $workspace_info = ([
+                    'workspace_id'=> 'workspace not exist'         
+                ]);
+            }  
 
             return response([
                 'status' => 1,
                 'workspace_info'=> $workspace_info
-               
+
             ], 200);
 
             
         } else if ($user->type = 'coordonator') {
-                    
             $workspace =  Workspace::where('student_id', $studentId)->first();
             $events = Event::where('workspace_id', $workspace->id)->with('attachment')->get();
             $events = isset($events) ? $events : [];
         
         $student =  Student::where('id', $workspace->student_id)->with('user')->first();
-
         $tema = Teme::where('id', $workspace->tema_id)->first();
         
             $workspace_info = ([
@@ -103,7 +106,7 @@ class EventController extends Controller
         $bearerToken      = $request->bearerToken();
         $token            = PersonalAccessToken::findToken($bearerToken);
         $user             = $token->tokenable;
-        $inputs['author_id'] = $user->id;
+        $inputs['author_id'] = $user->id;        
         $workspace =  Workspace::where('id', $inputs['workspace_id'])->first();
 
         if ($user->type == 'student') {
@@ -147,8 +150,7 @@ class EventController extends Controller
     public function show($id)
     {
         $event = Event::where('id',$id)->with('attachment', 'comments')->first();
-        
-        $user_id= $event->author_id;
+        $user_id= $event->$id;
         $user_type= $event->author_type;
         
         $user = User::where('id',$user_id)->first();
@@ -171,22 +173,24 @@ class EventController extends Controller
         $user        = $token->tokenable;
         $coordonator =  Coordonator::where('user_id', $user->id)->first();
         $results = [];
-        $events = Event::where('author_id',$coordonator->id)
+        $events = Event::where('author_id',$user->id)
                         ->where('author_type', 'coordonator')
                         ->where('due_date', '>=', Carbon::today()->toDateString())->get();
-        
+
         foreach ($events as  $event) {
             $workspace =  Workspace::where('id', $event->workspace_id)->first();
-            $student =  Student::where('id', $workspace->student_id)->with('user')->first();
-            $tema = Teme::where('id', $workspace->tema_id)->first();
-            $results [] = [
-                'student_name' => $student['user'] ? $student['user']['name'] : '',
-                'student_email' => $student['user'] ? $student['user']['email'] : '',
-                'tema_title' => $tema['title'],
-                'event_title' => $event['title'],
-                'event_type' => $event['type'],
-                'event_deadline' => $event['due_date'],
-            ];
+            if($workspace){
+                $student =  Student::where('id', $workspace->student_id)->with('user')->first();
+                $tema = Teme::where('id', $workspace->tema_id)->first();
+                $results [] = [
+                    'student_name' => $student['user'] ? $student['user']['name'] : '',
+                    'student_email' => $student['user'] ? $student['user']['email'] : '',
+                    'tema_title' => $tema['title'],
+                    'event_title' => $event['title'],
+                    'event_type' => $event['type'],
+                    'event_deadline' => $event['due_date'],
+                ];
+            }
 
         }
 
