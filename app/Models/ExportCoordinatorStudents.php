@@ -44,19 +44,19 @@ class ExportCoordinatorStudents implements FromArray, WithMapping, WithHeadings
         $coordonator_id     = $workspace['coordonator_id'];
         $tema_id            = $workspace['tema_id'];
 
-
+        
         $student = Student::where('id', $student_id)->with('user')->first(); 
         $coordonator = Coordonator::where('id', $coordonator_id)->with('user')->first(); 
         $tema = Teme::where('id', $workspace['tema_id'])->first();
-
-
-        $studentName        = $student->user->name;
-        $coordinatorName        = $coordonator->user->name;
-        $temaTitle        = $tema->title;
-
-
-       
-        return [$workspace['student_id'],$temaTitle, $coordinatorName,$studentName];
+        if ($student && $coordonator && $tema) {
+            $studentName        = $student->user->name;
+            $coordinatorName        = $coordonator->user->name;
+            $temaTitle        = $tema->title;
+    
+            return [$workspace['student_id'],$temaTitle, $coordinatorName,$studentName];
+        }else {
+            return [];
+        }
     }
 
 

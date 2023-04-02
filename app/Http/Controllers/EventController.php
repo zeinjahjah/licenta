@@ -154,16 +154,9 @@ class EventController extends Controller
     public function show($id)
     {
         $event = Event::where('id',$id)->with('attachment', 'comments')->first();
-        $coordonator = Event::where('author_id', $event->author_id)->first();
-        $coordonator_id = $coordonator->id;
-        $user_type= $event->author_type;
-        $user = User::where('id',$coordonator_id)->first();
-
-        $user_name =$user->name;
-
-        $event['author_name']= $user_name;
+        $coordonator = User::where('id', $event->author_id)->first();
+        $event['author_name']= $coordonator['name'];
    
-
         return response([
             'status' => 1,
             'data' => $event

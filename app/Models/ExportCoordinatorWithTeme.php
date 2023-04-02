@@ -37,10 +37,10 @@ class ExportCoordinatorWithTeme implements FromArray, WithMapping, WithHeadings
 
     public function map($tema): array
     {  
-        $coordinator = Coordonator::find($tema['coordonator_id'])->with('user')->first();
+        $coordinator = Coordonator::where('id', $tema['coordonator_id'])->with('user')->first();
         $coordinatorId    = $coordinator['id'];
         $coordinatorName    = isset($coordinator['user']) ? $coordinator['user']['name'] : "";
-        $coordinatorEmail    = isset($coordinator['email']) ? $coordinator['user']['email'] : "";
+        $coordinatorEmail    = isset($coordinator['user']) ? $coordinator['user']['email'] : "";
         $temaTitle = $tema['title'];
         $temaType = $tema['tema_type'];
         $temaDetalii = $tema['detalii'];
