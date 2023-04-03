@@ -22,24 +22,24 @@ class AuthController extends Controller
             // 'phone'      => 'string',
             // 'address'      => 'string',
             // 'facultatea'   => 'string',
-            'specializare'  => 'string',
+            'specializare'   => 'required_if:type,==,0',
             'is_admin'  => 'integer',
             'type'      => 'required | integer'
         ]);
 
-        // echo json_encode($fields);die;
-        // $fields['email']='';
         $fields['phone']='';
         $fields['address']='';
         $fields['facultatea']='';
         
         if ($fields['type'] == 0) {
             $type = 'student';
+            $fields['specializare'] = $request->get('specializare') ? $request->get('specializare') : '';
         } else if ($fields['type'] == 1) {
             $type = 'coordonator';
+            $fields['specializare']='';
         }else if ($fields['type'] == 2) {
             $type = 'admin';
-
+            $fields['specializare']='';
         }
 
         $user = User::create([

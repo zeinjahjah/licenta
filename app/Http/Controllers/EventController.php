@@ -37,7 +37,7 @@ class EventController extends Controller
                 $workspace['workspace id']= $workspace->id;
                 $events = Event::where('workspace_id', $workspace->id)->with('attachment')->get();
                 $events = isset($events) ? $events : [];
-                $coordonator =  Coordonator::where('user_id', $workspace->coordonator_id)->with('user')->first();
+                $coordonator =  Coordonator::where('id', $workspace->coordonator_id)->with('user')->first();
                 $tema = Teme::where('id', $workspace->tema_id)->first();
                 if ($coordonator){
                     $coordonator_name=$coordonator->user->name;
@@ -47,9 +47,10 @@ class EventController extends Controller
                 }
                 $workspace_info = ([
                     'workspace_id'=> $workspace->id,
-                    'studen name'=> $user->name,
-                    'coordonator name'=> $coordonator_name,
-                    'tema title'=> $tema->title,
+                    'studen_name'=> $user->name,
+                    'coordonator_name'=> $coordonator_name,
+                    'tema_title'=> $tema->title,
+                    'tema_name'=> $tema->title,
                     'events' => $events
                     
                 ]);
@@ -71,14 +72,15 @@ class EventController extends Controller
             $events = Event::where('workspace_id', $workspace->id)->with('attachment')->get();
             $events = isset($events) ? $events : [];
         
-        $student =  Student::where('id', $workspace->student_id)->with('user')->first();
-        $tema = Teme::where('id', $workspace->tema_id)->first();
+            $student =  Student::where('id', $workspace->student_id)->with('user')->first();
+            $tema = Teme::where('id', $workspace->tema_id)->first();
         
             $workspace_info = ([
                 'workspace_id'=> $workspace->id,
-                'coordonator name'=> $user->name,
-                'studen name'=> $student->user->name,
-                'tema title'=> $tema->title,
+                'coordonator_name'=> $user->name,
+                'studen_name'=> $student->user->name,
+                'tema_title'=> $tema->title,
+                'tema_name'=> $tema->title,
                 'events' => $events
                 
             ]);
