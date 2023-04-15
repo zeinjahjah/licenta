@@ -201,7 +201,7 @@ class WorkspaceController extends Controller
             ], 401);
         }
 
-        $coordonators =  Coordonator::with('user')->get();
+        $coordonators =  Coordonator::where("is_admin", 0)->with('user')->get();
 
         foreach ($coordonators as $key =>  $coordonator) {
             if (isset($coordonator['user'])){
@@ -214,26 +214,33 @@ class WorkspaceController extends Controller
 
             $workspaces =  Workspace::where('coordonator_id', $coordonator->id)->where('status', 1)->get();
             $students = [];
-            foreach ($workspaces as $key2 => $workspace) {
-                // get student data
-                $student = Student::where('id', $workspace['student_id'])->with('user')->first();
+            if (count($workspaces) > 0) {
+                foreach ($workspaces as $key2 => $workspace) {
+                    // get student data
+                    $student = Student::where('id', $workspace['student_id'])->with('user')->first();
+                    if (isset($student['user'])){
+                        $students[$key2]['email']        = $student['user']['email'];
+                        $students[$key2]['name']         = $student['user']['name'];
+                        $students[$key2]['specializare'] = $student['specializare'];
+                        $students[$key2]['workspace_id'] = $workspace['id'];
+                    }else {
+                        continue;
+                    }
+    
+                    // get tema data
+                    $tema = Teme::where('id', $workspace['tema_id'])->first();
+                    $students[$key2]['tema'] = $tema['title'];
+                }
                 if (isset($student['user'])){
                     $students[$key2]['email']        = $student['user']['email'];
                     $students[$key2]['name']         = $student['user']['name'];
                     $students[$key2]['specializare'] = $student['specializare'];
-                    $students[$key2]['workspace_id'] = $workspace['id'];
                 }
+                $coordonators[$key]['students'] = $students;
+            }else {
+                $coordonators[$key]['students'] = [];
 
-                // get tema data
-                $tema = Teme::where('id', $workspace['tema_id'])->first();
-                $students[$key2]['tema'] = $tema['title'];
             }
-            if (isset($student['user'])){
-                $students[$key2]['email']        = $student['user']['email'];
-                $students[$key2]['name']         = $student['user']['name'];
-                $students[$key2]['specializare'] = $student['specializare'];
-            }
-            $coordonators[$key]['students'] = $students;
         }
         
         return response([
