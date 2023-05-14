@@ -198,43 +198,48 @@ class TemeController extends Controller
     {
         $students = Student::with('workspace', 'user')->get();
 
-        foreach ($students as $key => $student) {
-            // get email from user table
-            if (isset($student['user'])) {
-                $students[$key]['email'] = $student['user']['email'];
-                $students[$key]['student_name'] = $student['user']['name'];
+        $students = $students->map(function ($student) {
+            if (isset($student->user)) {
+                $student->email = $student->user->email;
+                $student->student_name = $student->user->name;
             } else {
-                $students[$key]['email'] = '';
-                $students[$key]['student_name'] = '';
+                $student->email = '';
+                $student->student_name = '';
             }
-            unset($students[$key]['user']);
-
-            // get tema data
-            if (isset($student['workspace'])) {
-                $tema = Teme::where('id', $student['workspace']['tema_id'])->first();
-                $students[$key]['tema'] = $tema;
-            }
-
-            // get coordinator data
-            if (isset($student['workspace'])) {
-                $coordonator = Coordonator::where('id', $student['workspace']['coordonator_id'])->with('user')->first();
-
-                if (isset($coordonator['user'])) {
-                    $coordonator['email'] = $coordonator['user']['email'];
-                    $coordonator['coordinator_name'] = $coordonator['user']['name'];
+            unset($student->user);
+        
+            if (isset($student->workspace)) {
+                $tema = Teme::where('id', $student->workspace->tema_id)->first();
+                $student->tema = $tema;
+        
+                $coordonator = Coordonator::where('id', $student->workspace->coordonator_id)->with('user')->first();
+        
+                if (isset($coordonator->user)) {
+                    $coordonator->email = $coordonator->user->email;
+                    $coordonator->coordinator_name = $coordonator->user->name;
                 } else {
-                    $coordonator['email'] = '';
-                    $coordonator['coordinator_name'] = '';
+                    $coordonator->email = '';
+                    $coordonator->coordinator_name = '';
                 }
-                unset($coordonator['user']);
-
-                $students[$key]['coordonator'] = $coordonator;
+                unset($coordonator->user);
+        
+                $student->coordonator = $coordonator;
             }
+        
+            return $student;
+        });
+        
+        // Sort the collection by the 'student_name' attribute
+        $students = $students->sortBy('student_name');
+
+        
+        foreach ($students as $student) {
+           $result[] = $student;
         }
 
         return response([
             'status' => 1,
-            'data' => $students
+            'data' => $result
         ], 200);
     }
 }
