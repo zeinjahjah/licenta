@@ -36,7 +36,7 @@ class AuthController extends Controller
             $fields['specializare'] = $request->get('specializare') ? $request->get('specializare') : '';
         } else if ($fields['type'] == 1) {
             $type = 'coordonator';
-            $fields['specializare']='';
+            // $fields['specializare']='';
         }else if ($fields['type'] == 2) {
             $type = 'admin';
             $fields['specializare']='';

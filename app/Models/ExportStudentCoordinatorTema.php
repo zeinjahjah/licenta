@@ -44,8 +44,8 @@ class ExportStudentCoordinatorTema implements FromArray, WithMapping, WithHeadin
             $coordinatorId = $user['workspace']['coordonator_id'];
             $coordinator = Coordonator::find($coordinatorId)->with('user')->first();
             $coordinatorName    = isset($coordinator['user']) ? $coordinator['user']['name'] : "";
-            $coordinatorEmail    = isset($coordinator['email']) ? $coordinator['user']['email'] : "";
-
+            $coordinatorEmail    = isset($coordinator['user']) ? $coordinator['user']['email'] : "";
+            
             $coordinatorId = $user['workspace']['coordonator_id'];
 
             $temaId = $user['workspace']['tema_id'];

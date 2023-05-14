@@ -39,20 +39,24 @@ class ExportStudentStatus implements FromArray, WithMapping, WithHeadings
         $studentEmail    = isset($user['user']) ? $user['user']['email'] : "";
         $specializare = $user['specializare'];
 
-        $acceptedStudentsStatus = [1, 2];
-        $rejectedStudentsStatus = [0, 3];
-
         $status = 'rejected';
 
-        if ($user && $user['workspace'] && in_array($user['workspace']['status'], $acceptedStudentsStatus)) {
-            $status = 'accepted';
+
+        if ($user && !$user['workspace']) {
+            $status = 'fara tema';
+            return [$user['id'], $studentName, $studentEmail, $specializare, $status];
+        }
+   
+        if ($user && $user['workspace'] && $user['workspace']['status'] == 3) {
+            $status = 'rejected';
+            return [$user['id'], $studentName, $studentEmail, $specializare, $status];
         }
 
-        if ($user && $user['workspace'] && in_array($user['workspace']['status'], $rejectedStudentsStatus)) {
-            $status = 'rejected';
+        if ($user && $user['workspace'] && $user['workspace']['status'] == 0) {
+            $status = 'in asteptare';
+            return [$user['id'], $studentName, $studentEmail, $specializare, $status];
         }
-        
-        return [$user['id'], $studentName, $studentEmail, $specializare, $status];
-       
+        return [];
+
     }
 }
