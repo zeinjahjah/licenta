@@ -19,7 +19,9 @@ class ExportStudentCoordinatorTema implements FromArray, WithMapping, WithHeadin
 
     public function array(): array
     {
-        return Student::with('user', 'workspace')->get()->toArray();
+        return Student::with('user', 'workspace')->get()->sortBy(function($student){
+            return $student->user->name;
+        })->toArray();
     }
 
     public function headings(): array
@@ -49,7 +51,7 @@ class ExportStudentCoordinatorTema implements FromArray, WithMapping, WithHeadin
             $coordinatorId = $user['workspace']['coordonator_id'];
 
             $temaId = $user['workspace']['tema_id'];
-            $tema = Teme::find($temaId)->first();
+            $tema = Teme::find($temaId);
             $temaTitle = $tema['title'];
 
             return [$user['id'], $studentName, $studentEmail, $coordinatorName,  $coordinatorEmail, $temaTitle];

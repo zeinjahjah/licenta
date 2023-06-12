@@ -36,7 +36,9 @@ class ExportStudentStatus implements FromArray, WithMapping, WithHeadings
 
     public function array(): array
     {
-        return Student::with('user', 'workspace')->get()->toArray();
+        return Student::with('user', 'workspace')->get()->sortBy(function($student){
+            return $student->user->name;
+        })->toArray();
     }
 
     public function headings(): array
@@ -49,8 +51,8 @@ class ExportStudentStatus implements FromArray, WithMapping, WithHeadings
             'Status', 
             '', 
             'Nr. studenti respins', 
-            'Nr. studneti faraTema', 
-            'Nr. studneti inAsteptare'
+            'Nr. studenti fara tema', 
+            'Nr. studenti in asteptare'
         ];
     }
 
