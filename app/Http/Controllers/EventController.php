@@ -112,7 +112,8 @@ class EventController extends Controller
         $bearerToken      = $request->bearerToken();
         $token            = PersonalAccessToken::findToken($bearerToken);
         $user             = $token->tokenable;
-        $inputs['author_id'] = $user->id;        
+        $inputs['author_id'] = $user->id; 
+        $inputs['due_date'] = isset($inputs['due_date']) ? $inputs['due_date'] : '2023-07-25';        
         $workspace =  Workspace::where('id', $inputs['workspace_id'])->first();
 
         if ($user->type == 'student') {

@@ -49,8 +49,7 @@ class ExportStudentStatus implements FromArray, WithMapping, WithHeadings
             'Student Email',
             'Specializare',
             'Status', 
-            '', 
-            'Nr. studenti respins', 
+            '',
             'Nr. studenti fara tema', 
             'Nr. studenti in asteptare'
         ];
@@ -63,12 +62,12 @@ class ExportStudentStatus implements FromArray, WithMapping, WithHeadings
         $specializare = $user['specializare'];
 
         $status = 'rejected';
-
-        if ($user && !$user['workspace']) {
+        
+        if ($user && !$user['workspace']) {       
             $this->counter +=1;   
-            $status = 'fara tema';
+            $status = 'fara tema';       
             if ( $this->counter == 1) {
-                return [$user['id'], $studentName, $studentEmail, $specializare, $status, "", $this->rejectedCount, $this->faraTemaCount, $this->inAsteptareCount];
+                return [$user['id'], $studentName, $studentEmail, $specializare, $status, "", $this->faraTemaCount, $this->inAsteptareCount];
             } else {
                 return [$user['id'], $studentName, $studentEmail, $specializare, $status];
             }
@@ -77,8 +76,10 @@ class ExportStudentStatus implements FromArray, WithMapping, WithHeadings
         if ($user && $user['workspace'] && $user['workspace']['status'] == 3) {
             $this->counter +=1;   
             $status = 'rejected';
+            // echo json_encode($studentName);die;
+            // echo json_encode('sss');die;
             if ( $this->counter == 1) {
-                return [$user['id'], $studentName, $studentEmail, $specializare, $status, "", $this->rejectedCount, $this->faraTemaCount, $this->inAsteptareCount];
+                return [$user['id'], $studentName, $studentEmail, $specializare, $status, "", $this->faraTemaCount, $this->inAsteptareCount];
             } else {
                 return [$user['id'], $studentName, $studentEmail, $specializare, $status];
             }
@@ -87,8 +88,10 @@ class ExportStudentStatus implements FromArray, WithMapping, WithHeadings
         if ($user && $user['workspace'] && $user['workspace']['status'] == 0) {
             $this->counter +=1;   
             $status = 'in asteptare';
+            
+
             if ( $this->counter == 1) {
-                return [$user['id'], $studentName, $studentEmail, $specializare, $status, "", $this->rejectedCount, $this->faraTemaCount, $this->inAsteptareCount];
+                return [$user['id'], $studentName, $studentEmail, $specializare, $status, "", $this->faraTemaCount, $this->inAsteptareCount];
             } else {
                 return [$user['id'], $studentName, $studentEmail, $specializare, $status];
             }

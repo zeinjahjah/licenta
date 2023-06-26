@@ -55,9 +55,9 @@ class ExportCoordinatorStudents implements FromArray, WithMapping, WithHeadings
     
             if (!in_array($coordonator_id, $this->coordinatorArray)) {
                 $this->coordinatorArray[] = $coordonator_id;
-                return [$workspace['student_id'],$temaTitle, $studentName, $coordinatorName, $numar_de_students];
+                return [$workspace['id'],$temaTitle, $studentName, $coordinatorName, $numar_de_students];
             }else{
-                return [$workspace['student_id'],$temaTitle, $studentName, $coordinatorName, ""];
+                return [$workspace['id'],$temaTitle, $studentName, $coordinatorName, ""];
             }
 
         }else {
